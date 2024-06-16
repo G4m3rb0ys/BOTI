@@ -6,20 +6,24 @@ using System.Threading.Tasks;
 
 namespace BOTI
 {
-    internal class Player
+    public class Player
     {
-
-        // variables
+        // Variables
         public int ID { get; private set; }
         public string Name { get; private set; }
         public string Color { get; private set; }
 
-        // functions
+        // Functions
         public Player(string name, string color)
         {
-            this.Name = name;
-            this.Color = color;
+            Name = name;
+            Color = color;
         }
 
+        public void SetID(int id)
+        {
+            ID = id;
+        }
     }
 }
+

@@ -4,21 +4,20 @@ using System.Linq;
 
 namespace BOTI
 {
-    internal class Game
+    public class Game
     {
         // Variables
         // Constants
         private const int GridSize = 10;
         private const string DefaultLandColor = "Grey";
-        public bool GameOver = false;
+        public bool GameOver { get; set; }
 
         // Properties
         public int ID { get; private set; }
-        public List<Player> Players { get; private set; }
-        public List<Land> Lands { get; private set; }
+        public List<Player> Players { get; set; }
+        public List<Land> Lands { get; set; }
         public Player CurrentPlayer { get; private set; }
         public int Round { get; private set; }
-        
 
         // Constructor
         public Game(List<Player> players)
@@ -38,7 +37,6 @@ namespace BOTI
                     Land land = new Land(DefaultLandColor, 0, location, null);
                     Lands.Add(land);
                     usableLand.Add(land);
-                    
                 }
             }
 
@@ -53,7 +51,7 @@ namespace BOTI
             }
         }
 
-        // methods
+        // Methods
         private char GetColumnLetter(int col) => (char)('A' + col);
 
         private int GetInitialTileCount(int playerCount) => playerCount switch
@@ -72,7 +70,7 @@ namespace BOTI
                 // Place first tile randomly
                 int index = rand.Next(usableLand.Count);
                 Land land = usableLand[index];
-                land.assignOwner(Players[rand.Next(Players.Count)]);
+                land.AssignOwner(Players[rand.Next(Players.Count)]);
                 usableLand.RemoveAt(index);
                 return land;
             }
@@ -80,7 +78,7 @@ namespace BOTI
             {
                 // Place subsequent tiles adjacent to available tiles
                 Land adjacentLand = GetAdjacentLand(rand, availableTiles);
-                adjacentLand.assignOwner(Players[rand.Next(Players.Count)]);
+                adjacentLand.AssignOwner(Players[rand.Next(Players.Count)]);
                 usableLand.Remove(adjacentLand);
                 return adjacentLand;
             }
@@ -146,30 +144,30 @@ namespace BOTI
             if (fromLand.Owner != player)
             {
                 validattack = false;
-                reason = ("You do not own the attacking land");
+                reason = "You do not own the attacking land";
             }
             else if (toLand.Owner == player)
             {
                 validattack = false;
-                reason = ("You cannot attack your own land");
+                reason = "You cannot attack your own land";
             }
             else if (!GetAdjacentLands(fromLand).Contains(toLand))
             {
                 validattack = false;
-                reason = ("The attacking and defending lands are not adjacent");
+                reason = "The attacking and defending lands are not adjacent";
             }
             else if (fromLand.Soldiers <= 1)
             {
                 validattack = false;
-                reason = ("You do not have enough soldiers to attack");
+                reason = "You do not have enough soldiers to attack";
             }
             else if (fromLand.Soldiers <= toLand.Soldiers)
             {
                 validattack = false;
-                reason = ("You do not have enough soldiers to attack");
+                reason = "You do not have enough soldiers to attack";
             }
 
-            if (validattack == true)
+            if (validattack)
             {
                 Random rand = new Random();
                 int attackerRoll = rand.Next(1, 7);
@@ -199,10 +197,10 @@ namespace BOTI
 
         public void PlaceSoldier(Player player, string location, int soldiers)
         {
-            Land land = Lands.FirstOrDefault(land => land.Location == location);
+            Land land = Lands.FirstOrDefault(l => l.Location == location);
             if (land.Owner == player)
             {
-                soldiers = soldiers + land.Soldiers;
+                soldiers += land.Soldiers;
                 land.SetSoldiers(soldiers);
             }
             else
@@ -213,8 +211,8 @@ namespace BOTI
 
         public void RelocateSoldiers(Player player, string from, string to, int soldiers)
         {
-            Land fromLand = Lands.FirstOrDefault(land => land.Location == from);
-            Land toLand = Lands.FirstOrDefault(land => land.Location == to);
+            Land fromLand = Lands.FirstOrDefault(l => l.Location == from);
+            Land toLand = Lands.FirstOrDefault(l => l.Location == to);
             if (fromLand.Owner == player && toLand.Owner == player)
             {
                 if (fromLand.Soldiers > soldiers)
@@ -232,6 +230,22 @@ namespace BOTI
                 Console.WriteLine("You do not own one of the lands");
             }
         }
+
+        public void SetID(int id)
+        {
+            ID = id;
+        }
+
+        public void SetRound(int round)
+        {
+            Round = round;
+        }
+
+        public void SetCurrentPlayer(Player player)
+        {
+            CurrentPlayer = player;
+        }
+
 
     }
 }
